@@ -2,7 +2,9 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "src/*": ["*"]
+      "src/*": ["*"],
+      "services": ["/services/*, /services"],
+      "utils": ["/utils/*, /utils"],
     },
     "moduleResolution": "node",
     "outDir": "./dist",
