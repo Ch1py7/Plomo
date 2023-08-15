@@ -1,6 +1,8 @@
+import { TeamProps } from 'src/types/Teams'
+
 export module Teams {
-  const firstTeam: number[] = []
-  const secondTeam: number[] = []
+  const firstTeam: TeamProps[] = []
+  const secondTeam: TeamProps[] = []
 
   let firstTeamName: string
   let secondTeamName: string
@@ -21,19 +23,23 @@ export module Teams {
     }
   }
 
-  export const addPlayer = (team: number, playerId: number) => {
+  export const addPlayer = (team: number, { userID, userName }: TeamProps) => {
+    const player = { userID, userName }
+
     if (team === 1) {
-      firstTeam.push(playerId)
+      firstTeam.push(player)
     } else {
-      secondTeam.push(playerId)
+      secondTeam.push(player)
     }
   }
 
-  export const removePlayer = (team: number, playerId: number) => {
+  export const removePlayer = (team: number, userID: number, userName: string) => {
+    const player = { userID, userName }
+
     if (team === 1) {
-      firstTeam.splice(firstTeam.indexOf(playerId), 1)
+      firstTeam.splice(firstTeam.indexOf(player), 1)
     } else {
-      secondTeam.splice(secondTeam.indexOf(playerId), 1)
+      secondTeam.splice(secondTeam.indexOf(player), 1)
     }
   }
 
