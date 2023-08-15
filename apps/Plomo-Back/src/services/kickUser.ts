@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { refreshToken } from './refreshToken'
 
-export const setTimeout = async (user_id: number, duration: number) => {
+export const kickUser = async (user_id: number, duration: number) => {
   const token = await refreshToken()
     
   const url = process.env.TWITCH_BAN_URL!

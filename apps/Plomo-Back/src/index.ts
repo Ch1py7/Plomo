@@ -1,8 +1,7 @@
 import dotenv from 'dotenv'
 import { client } from './client'
-import { setTimeout } from './services/setTimeout'
-import { CounterA, CounterB } from './utils'
-import { Teams } from './utils/teams'
+import { kickUser } from './services'
+import { CounterA, CounterB, Teams } from './utils'
 
 dotenv.config()
 client.connect()
@@ -17,9 +16,9 @@ client.on('message', async (channel, tags, message) => {
   const isUserBroadcaster = tags['user-id'] === tags['room-id']
   const teamCommand = command.toLowerCase()
 
-  if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === Teams.getTeamName(1)) {
+  if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(1)}`) {
     Teams.addPlayer(1, userID)
-  } else if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === Teams.getTeamName(2)) {
+  } else if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(2)}`) {
     Teams.addPlayer(2, userID)
   }
 
@@ -33,7 +32,7 @@ client.on('message', async (channel, tags, message) => {
       CounterA.increment()
     } else {
       Teams.removePlayer(1, userID)
-      setTimeout(userID, currentNumber === 0 ? 1 : currentNumber)
+      kickUser(userID, currentNumber === 0 ? 1 : currentNumber)
       CounterA.reset()
     }
   }
@@ -43,7 +42,7 @@ client.on('message', async (channel, tags, message) => {
       CounterB.increment()
     } else {
       Teams.removePlayer(2, userID)
-      setTimeout(userID, currentNumber === 0 ? 1 : currentNumber)
+      kickUser(userID, currentNumber === 0 ? 1 : currentNumber)
       CounterB.reset()
     }
   }
