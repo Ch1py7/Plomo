@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios'
+import { HelixToken } from 'src/types/HelixClient'
 
 export const refreshToken = async () => {
   try {
@@ -7,7 +8,7 @@ export const refreshToken = async () => {
     const REFRESH_TOKEN = process.env.TWITCH_REFRESH_TOKEN
     const url = process.env.TWITCH_BOT_URL!
 
-    const response = await axios.post(url, {
+    const response = await axios.post<HelixToken>(url, {
       grant_type: 'refresh_token',
       refresh_token: REFRESH_TOKEN,
       client_id: ID,

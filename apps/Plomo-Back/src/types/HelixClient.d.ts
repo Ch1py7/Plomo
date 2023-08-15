@@ -1,5 +1,7 @@
 export interface HelixToken {
 	access_token: string
 	expires_in: number
-	token_type: string
+  token_type: string
+  refresh_token: string
+  scope: string
 }
