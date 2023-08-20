@@ -46,7 +46,7 @@ client.on('message', async (channel, tags, message) => {
   }
 
   // set teams names and goals
-  if (isUserBroadcaster && teamCommand === '!teams' && param1 && param2 && param3) {
+  if (isUserBroadcaster && teamCommand === '!teams' && param1 && param2 && parseInt(param3)) {
     Teams.setTeamName(true, param1)
     CounterA.setGoal(parseInt(param3))
     Teams.setTeamName(false, param2)
@@ -56,7 +56,7 @@ client.on('message', async (channel, tags, message) => {
   }
   
   // ban players
-  if (teamCommand === `!${Teams.getTeamName(true)}` && isUserInTeam1 && param1 && !tags.badges?.broadcaster) {
+  if (teamCommand === `!${Teams.getTeamName(true)}` && isUserInTeam1 && parseInt(param1) && !tags.badges?.broadcaster) {
     if (currentNumber === CounterA.getValue() + 1) {
       CounterA.increment()
       if (currentNumber === CounterA.getGoal()) {
@@ -70,7 +70,7 @@ client.on('message', async (channel, tags, message) => {
     }
   }
   
-  if (teamCommand === `!${Teams.getTeamName(false)}` && isUserInTeam2 && param1 && !tags.badges?.broadcaster) {
+  if (teamCommand === `!${Teams.getTeamName(false)}` && isUserInTeam2 && parseInt(param1) && !tags.badges?.broadcaster) {
     if (currentNumber === CounterB.getValue() + 1) {
       CounterB.increment()
       if (currentNumber === CounterB.getGoal()) {
