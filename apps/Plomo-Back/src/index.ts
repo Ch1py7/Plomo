@@ -25,7 +25,7 @@ io.on('connection', () => {
 })
 
 client.on('message', async (channel, tags, message) => {
-  const [command, param1, param2] = message.split(' ')
+  const [command, param1, param2, param3] = message.split(' ')
   const currentNumber = parseInt(param1)
   const userID = parseInt(tags['user-id']!)
   const userName = tags['username']!
@@ -45,10 +45,12 @@ client.on('message', async (channel, tags, message) => {
     io.emit('second_team', Teams.getPlayers(false))
   }
 
-  // set teams names
-  if (isUserBroadcaster && teamCommand === '!teams' && param1 && param2) {
+  // set teams names and goals
+  if (isUserBroadcaster && teamCommand === '!teams' && param1 && param2 && param3) {
     Teams.setTeamName(true, param1)
+    CounterA.setGoal(parseInt(param3))
     Teams.setTeamName(false, param2)
+    CounterB.setGoal(parseInt(param3))
     io.emit('first_team_name', Teams.getTeamName(true))
     io.emit('second_team_name', Teams.getTeamName(false))
   }
@@ -57,6 +59,10 @@ client.on('message', async (channel, tags, message) => {
   if (teamCommand === `!${Teams.getTeamName(true)}` && isUserInTeam1 && param1 && !tags.badges?.broadcaster) {
     if (currentNumber === CounterA.getValue() + 1) {
       CounterA.increment()
+      if (currentNumber === CounterA.getGoal()) {
+        CounterA.reset()
+        Teams.banTeam(false, CounterA.getGoal())
+      }
     } else {
       Teams.banPlayers(true, currentNumber)
       io.emit('first_team', Teams.getPlayers(true))
@@ -67,6 +73,10 @@ client.on('message', async (channel, tags, message) => {
   if (teamCommand === `!${Teams.getTeamName(false)}` && isUserInTeam2 && param1 && !tags.badges?.broadcaster) {
     if (currentNumber === CounterB.getValue() + 1) {
       CounterB.increment()
+      if (currentNumber === CounterB.getGoal()) {
+        CounterB.reset()
+        Teams.banTeam(true, CounterB.getGoal())
+      }
     } else {
       Teams.banPlayers(false, currentNumber)
       io.emit('second_team', Teams.getPlayers(false))

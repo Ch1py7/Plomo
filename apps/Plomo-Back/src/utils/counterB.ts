@@ -1,5 +1,10 @@
 export module CounterB {
   let value = 0
+  let goal: number
+
+  export const setGoal = (newGoal: number) => {
+    goal = newGoal
+  }
 
   export const increment = () => {
     value++
@@ -12,5 +17,9 @@ export module CounterB {
 
   export const getValue = () => {
     return value
+  }
+
+  export const getGoal = () => {
+    return goal
   }
 }

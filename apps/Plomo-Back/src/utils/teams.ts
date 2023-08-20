@@ -90,6 +90,20 @@ export module Teams {
     }
   }
 
+  export const banTeam = (team: boolean, goalTime: number) => {
+    if (team) {
+      firstTeam.forEach(player => {
+        kickUser(player.userID, goalTime)
+      })
+      firstTeam.splice(0, firstTeam.length)
+    } else {
+      secondTeam.forEach(player => {
+        kickUser(player.userID, goalTime)
+      })
+      secondTeam.splice(0, secondTeam.length)
+    }
+  }
+
   export const getPlayers = (team: boolean) => {
     if (team) {
       return firstTeam
