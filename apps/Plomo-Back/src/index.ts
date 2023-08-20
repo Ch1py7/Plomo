@@ -2,7 +2,6 @@ import dotenv from 'dotenv'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { client } from './client'
-import { kickUser } from './services'
 import { CounterA, CounterB, Teams } from './utils'
 
 dotenv.config()
@@ -37,14 +36,16 @@ client.on('message', async (channel, tags, message) => {
   const isUserBroadcaster = tags['user-id'] === tags['room-id']
   const teamCommand = command.toLowerCase()
   
-  if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(true)}`) {
+  // add player to team
+  if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(true)}` && !tags.badges?.broadcaster) {
     Teams.addPlayer(true, player)
     io.emit('first_team', Teams.getPlayers(true))
-  } else if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(false)}`) {
+  } else if (!isUserInTeam1 && !isUserInTeam2 && teamCommand === `!${Teams.getTeamName(false)}` && !tags.badges?.broadcaster) {
     Teams.addPlayer(false, player)
     io.emit('second_team', Teams.getPlayers(false))
   }
 
+  // set teams names
   if (isUserBroadcaster && teamCommand === '!teams' && param1 && param2) {
     Teams.setTeamName(true, param1)
     Teams.setTeamName(false, param2)
@@ -52,12 +53,12 @@ client.on('message', async (channel, tags, message) => {
     io.emit('second_team_name', Teams.getTeamName(false))
   }
   
+  // ban players
   if (teamCommand === `!${Teams.getTeamName(true)}` && isUserInTeam1 && param1 && !tags.badges?.broadcaster) {
     if (currentNumber === CounterA.getValue() + 1) {
       CounterA.increment()
     } else {
-      Teams.removePlayer(true, player)
-      kickUser(userID, currentNumber === 0 ? 1 : currentNumber)
+      Teams.banPlayers(true, currentNumber)
       io.emit('first_team', Teams.getPlayers(true))
       CounterA.reset()
     }
@@ -67,8 +68,7 @@ client.on('message', async (channel, tags, message) => {
     if (currentNumber === CounterB.getValue() + 1) {
       CounterB.increment()
     } else {
-      Teams.removePlayer(false, player)
-      kickUser(userID, currentNumber === 0 ? 1 : currentNumber)
+      Teams.banPlayers(false, currentNumber)
       io.emit('second_team', Teams.getPlayers(false))
       CounterB.reset()
     }
